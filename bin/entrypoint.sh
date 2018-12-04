@@ -1,22 +1,21 @@
 #!/usr/bin/env bash
 
-function finish {
-  kill -9 `pidof gearmand`
+function graceful {
+  kill -USR1 `pidof gearmand`
 }
 
-trap finish SIGTERM SIGKILL
+function finish {
+  kill -KILL `pidof gearmand`
+}
 
+trap graceful SIGTERM
+trap finish SIGKILL
 
-DEFAULT_PORT=4730
+PARAMS="--job-retries=1 --log-file=none --round-robin"
 
-PARAMS="--backlog=32 \
-  --job-retries=0 \
-  --listen=0.0.0.0 \
-  --threads=4 \
-  --worker-wakeup=0 \
-  --log-file=none \
-  --port=${GEARMAN_PORT:-$DEFAULT_PORT} \
-  "
+if [ ! -z $GEARMAN_PORT ]; then
+  PARAMS="$PARAMS --port=$GEARMAN_PORT"
+fi
 
 if [ ! -z $MEMCACHE_HOST ]; then
   PARAMS="$PARAMS --queue-type=libmemcached --libmemcached-servers=$MEMCACHE_HOST"
