@@ -2,6 +2,9 @@ FROM debian:buster-slim
 MAINTAINER sysadmin@kronostechnologies.com
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV GEARMAN_JOB_RETRIES=1
+ENV GEARMAN_LOG_FILE=stderr
+ENV GEARMAN_ROUND_ROBIN=true
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
 gearman-tools \
