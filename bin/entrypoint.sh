@@ -25,4 +25,4 @@ done
 
 echo "Starting gearman job server with params: $PARAMS"
 
-exec gearmand $PARAMS
+exec env -i /usr/sbin/gearmand $PARAMS
